@@ -6,15 +6,11 @@
 ## 1. Executive Summary
 This consolidated report details the design decisions, data structure implementations, kernel modifications, and experimental results for **Assignment 8: Memory Management in xv6**. Memory management is one of the most fundamental subsystems of any operating system kernel, bridging high-level process isolation and hardware-level page tables and memory management units (MMU).
 
-Across this assignment, eight distinct virtual and physical memory mechanisms were implemented, instrumented, and evaluated on the x86 architecture:
+Across this assignment, four distinct virtual and physical memory mechanisms were implemented, instrumented, and evaluated on the x86 architecture:
 1. **Virtual to Physical Address Translation** (`va2pa`): Kernel page directory and table traversal exposing physical frame mapping and flag bits.
 2. **Physical Memory Statistics** (`getmeminfo`): System-wide free frame counting, user address space metrics, and page table accounting with zero memory leaks.
 3. **Process Page Table Hierarchy Dump** (`vmprint`): Complete two-level paging dump identifying user memory, stack, stack guard page (`PTE_U` cleared), and kernel space.
 4. **Demand Paging / Lazy Heap Allocation** (`lazytest`): Zero-overhead lazy expansion via `sbrk()`, on-demand physical page allocation on trap 14 (`T_PGFLT`), kernel buffer handling, and out-of-bounds process termination.
-5. **Copy-on-Write (COW) Fork** (`cowtest`): Shared read-only physical frame mapping on fork with per-frame reference counts, transparent copy on write fault, and leak-free destruction.
-6. **Memory Protection System Call** (`mprotect`): Dynamic configuration of read-only, read-write, and inaccessible pages with hardware fault enforcement.
-7. **Inter-Process Shared Memory** (`shmget`, `shmat`): Physical frame sharing across disparate process address spaces facilitating high-speed zero-copy IPC.
-8. **Page Replacement Policies** (`pagerepl`): Comparative benchmark of FIFO, LRU, and Optimal replacement algorithms, including rigorous verification of Belady's Anomaly and stack algorithm monotonicity.
 
 ---
 
@@ -128,106 +124,5 @@ In the `vmprint()` output for `vmprinttest`:
 
 ---
 
-## 6. Question 5 — Copy-on-Write (COW) Fork
-
-### 6.1 Design Decisions & Key Data Structures
-- **Physical Page Reference Counting**: Implemented `uint kmem.ref[PHYSTOP >> PGSHIFT]` in `kalloc.c`.
-  - Frame allocation (`kalloc`) initializes reference count to 1.
-  - `kref_inc(pa)` and `kref_dec(pa)` provide atomic increment/decrement under `kmem.lock`.
-  - `kfree(v)` only returns the frame to `kmem.freelist` when `kref_dec(V2P(v)) == 0`.
-- **COW Mapping in `copyuvm()`**:
-  - Instead of duplicating frames, `copyuvm()` maps the parent's physical frames directly into the child page directory.
-  - Clears `PTE_W` and sets `PTE_COW = 0x800` in both parent and child PTEs.
-  - Increments `kref_inc(pa)` and flushes the TLB (`lcr3(rcr3())`).
-- **Page Fault Handler (`trap.c`)**:
-  - When a write triggers `T_PGFLT` on a page with `*pte & PTE_COW`:
-    - If `kref_get(pa) > 1`: Allocates a new frame via `kalloc()`, copies data with `memmove()`, decrements old frame reference count, maps new frame with `PTE_W` enabled and `PTE_COW` cleared, and flushes TLB.
-    - If `kref_get(pa) == 1`: Sole owner remaining; clears `PTE_COW` and enables `PTE_W` in place without memory allocation.
-
-### 6.2 Memory Usage Before and After (Free Pages Table)
-
-| Test Stage | Free Pages | Consumed Frames | Explanation |
-| :--- | :---: | :---: | :--- |
-| **Baseline** | **56,302** | 0 | Initial state |
-| **After Allocating 32 Pages (128 KB)** | **56,270** | 32 | Writable parent pages |
-| **Immediately After `fork()`** | **56,268** | **2** | Only 2 page table frames cloned, **0 data frames duplicated!** |
-| **After Child Writes to Page 0** | **56,267** | **1** | Exactly 1 COW frame duplicated on write fault |
-| **After Child Exits and Reaped** | **56,270** | **0** | All cloned frames freed; reference counts restored to 1 |
-
----
-
-## 7. Question 6 — Memory Protection (`mprotect`)
-
-### 7.1 Design Decisions & System Call Specification
-- **`int mprotect(void *addr, int len, int prot)`**:
-  - Validates `addr % PGSIZE == 0` and `addr + len <= myproc()->sz`.
-  - Bitmask constants: `PROT_NONE = 0x0`, `PROT_READ = 0x1`, `PROT_WRITE = 0x2`.
-  - Traverses `[addr, addr+len)` with `walkpgdir()`:
-    - `PROT_NONE`: Clears `PTE_U` and `PTE_W`.
-    - `PROT_READ`: Sets `PTE_U`, clears `PTE_W`.
-    - `PROT_WRITE`: Sets both `PTE_U` and `PTE_W`.
-  - Invalidate TLB caches via `lcr3(rcr3())`.
-- **Fault Trapping**: Write attempts to `PROT_READ` pages trigger trap 14 with hardware error code `0x7` (User write to present page). Offending processes are safely terminated with an informative diagnostic message.
-
----
-
-## 8. Question 7 — Inter-Process Shared Memory (`shm`)
-
-### 8.1 Design Decisions & Data Structures
-- **Kernel Shared Memory Table (`shm_table` in `shm.c`)**:
-  ```c
-  struct shm_region {
-    int key;
-    char *phys_frame;
-    int ref_count;
-    int in_use;
-  };
-  struct shm_region regions[MAX_SHM];
-  ```
-- **System Calls**:
-  - `shmget(int key, int size)`: Searches for active region matching `key`. If absent, allocates a zeroed physical frame via `kalloc()`.
-  - `shmat(int shmid)`: Maps `phys_frame` into calling process address space at `PGROUNDUP(sz)` with `PTE_W | PTE_U`, expands `sz`, and returns virtual address.
-- **Verification (`shmtest.c`)**: Parent wrote `"GREETINGS_FROM_PARENT"`. Child attached, read greeting, and wrote `"ACK_FROM_CHILD_PROCESS_PID_4"`. Parent read child's message directly, proving true zero-copy inter-process communication.
-
----
-
-## 9. Question 8 — Page Replacement Algorithms (FIFO, LRU, Optimal)
-
-### 9.1 Algorithmic Formulations
-1. **FIFO (First-In, First-Out)**: Uses a circular queue pointer to evict the page loaded earliest into memory.
-2. **LRU (Least Recently Used)**: Tracks the timestamp of each access; evicts the frame whose last reference timestamp is minimum.
-3. **Optimal (Belady's MIN / OPT)**: Scans future reference tokens and evicts the page whose next access occurs furthest in time, or never.
-
-### 9.2 Page Fault Comparison Table
-
-#### Workload 1: Standard OS Benchmark (20 References)
-`Stream: 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1`
-
-| Frames | FIFO Faults | LRU Faults | OPT Faults | FIFO Hit % | LRU Hit % | OPT Hit % |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **3** | 15 | 12 | **9** | 25.0% | 40.0% | **55.0%** |
-| **4** | 10 | 8 | **8** | 50.0% | 60.0% | **60.0%** |
-| **5** | 9 | 7 | **7** | 55.0% | 65.0% | **65.0%** |
-| **6** | 6 | 6 | **6** | 70.0% | 70.0% | **70.0%** |
-| **7** | 6 | 6 | **6** | 70.0% | 70.0% | **70.0%** |
-
-#### Workload 2: Belady's Anomaly Verification (12 References)
-`Stream: 1 2 3 4 1 2 5 1 2 3 4 5`
-
-| Frames | FIFO Faults | LRU Faults | OPT Faults | FIFO Hit % | LRU Hit % | OPT Hit % |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **3** | **9** | 10 | 7 | 25.0% | 16.7% | 41.7% |
-| **4** | **10** (Anomaly!) | 8 | 6 | 16.7% | 33.3% | 50.0% |
-| **5** | 5 | 5 | 5 | 58.3% | 58.3% | 58.3% |
-| **6** | 5 | 5 | 5 | 58.3% | 58.3% | 58.3% |
-| **7** | 5 | 5 | 5 | 58.3% | 58.3% | 58.3% |
-
-### 9.3 Comparative Analysis & Belady's Anomaly Discussion
-- **Belady's Anomaly**: Observed strictly in FIFO on Workload 2, where increasing frame capacity from 3 to 4 increased page faults from 9 to 10 (Hit ratio dropped from 25.0% to 16.7%).
-- **Stack Algorithm Proof**: LRU exhibited monotonically non-increasing page faults ($10 	o 8 	o 5$), confirming Mattson's Stack Algorithm property: the set of pages in a memory of $m$ frames is always a subset of pages in a memory of $m+1$ frames ($S(m, t) \subseteq S(m+1, t)$).
-- **Optimality**: OPT established the theoretical lower bound across all tests (e.g. 9 faults vs 15 in FIFO at 3 frames).
-
----
-
-## 10. Conclusion
-All eight memory management extensions were designed, implemented, and validated. The implementations satisfy all isolation, safety, performance, and correctness invariants required for modern operating system kernels.
+## 6. Conclusion
+All four memory management extensions were designed, implemented, and validated. The implementations satisfy all isolation, safety, performance, and correctness invariants required for modern operating system kernels.
