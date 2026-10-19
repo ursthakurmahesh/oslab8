@@ -1,0 +1,48 @@
+xv6 release 2
+booting...
+cpu0: starting 1
+cpu0: starting 2
+cpu0: starting 3
+sb: size 1000 sectors 10000 log 30 blocks 9639
+init: starting sh
+$ lazytest
+
+========================================================
+     xv6 Question 4: Lazy Memory Allocation Test        
+========================================================
+
+[Phase 1: Baseline Memory State]
+  Free Physical Pages: 56302 (225208 KB)
+  Process User Pages : 4 (16 KB)
+
+[Phase 2: Allocating 32 MB (8192 pages) via sbrk()]
+  Returned Heap Base : 0x4000
+  Free Physical Pages: 56302 (Delta: 0 pages)
+  Process User Pages : 8196 (Delta: +8192 pages)
+  -> [PASSED] 32 MB allocated in O(1) without consuming 8192 frames!
+
+[Phase 3: Touching 3 Widely Spaced Pages (Demand Paging)]
+  Accessing page 0 (offset 0 MB)...
+  Accessing page 1024 (offset 4 MB)...
+  Accessing page 8000 (offset 31.25 MB)...
+  Free Physical Pages After 3 Touches: 56296
+  Consumed Physical Frames           : 6 frames (Exact 3 pages + page tables)
+  -> [PASSED] Only touched pages consumed physical memory frames!
+
+[Phase 4: Kernel System Call on Untouched Lazy Buffer]
+  Read data into untouched buffer: 'HELLO_LAZY_XV6'
+  -> [PASSED] Kernel read/write transparently populated lazy page!
+
+[Phase 5: Testing fork() with Lazy Pages]
+  [CHILD] Correctly read parent data from demand-paged heap.
+  [PARENT] Child safely completed. copyuvm() skipped untouched pages.
+
+[Phase 6: Edge Case - Out-of-Bounds Access Termination]
+  [CHILD 2] Attempting invalid write beyond sz (addr = 0x2005000)...
+pid 5 lazytest: segmentation fault / invalid page fault at va 0x2005000 (sz=0x2004000)
+  [PARENT] Child 2 was cleanly terminated without crashing kernel!
+
+========================================================
+  Question 4 Lazy Allocation Verification: ALL PASSED!   
+========================================================
+$ 

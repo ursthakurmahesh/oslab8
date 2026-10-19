@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 1305" width="820" height="1305">
+  <defs>
+    <linearGradient id="headerGrad_Question3_Dumping_Page_Table_screenshot_svg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="820" height="1305" rx="10" fill="#090d16" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+  <path d="M 0 10 Q 0 0 10 0 L 810 0 Q 820 0 820 10 L 820 38 L 0 38 Z" fill="url(#headerGrad_Question3_Dumping_Page_Table_screenshot_svg)"/>
+  <line x1="0" y1="38" x2="820" y2="38" stroke="#1e293b" stroke-width="1.5"/>
+
+  <circle cx="22" cy="19" r="6" fill="#ef4444"/>
+  <circle cx="42" cy="19" r="6" fill="#f59e0b"/>
+  <circle cx="62" cy="19" r="6" fill="#10b981"/>
+
+  <text x="410" y="24" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle">xv6 Terminal - Question 3: vmprint Page Table Dump</text>
+  <g>
+    <text x="25" y="65" fill="#38bdf8" font-family="Consolas, Fira Code, monospace" font-size="13" font-weight="bold">$ vmprinttest</text>
+    <text x="25" y="85" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">$ vmprinttest</text>
+    <text x="25" y="105" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="125" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">      xv6 Question 3: Process Page Table Dump Test      </text>
+    <text x="25" y="145" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="165" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Phase 1] Process Page Table at Startup:</text>
+    <text x="25" y="185" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="205" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">page table 0x8dfda000 (pid 4: vmprinttest)</text>
+    <text x="25" y="225" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]</text>
+    <text x="25" y="245" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [0]: va=0x0 -&gt; pa=0xdfdb000, flags=[P,W,U]</text>
+    <text x="25" y="265" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [1]: va=0x1000 -&gt; pa=0xdfdc000, flags=[P,W,U]</text>
+    <text x="25" y="285" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [2]: va=0x2000 -&gt; pa=0xdfdd000, flags=[P,W,-] &lt;-- [GUARD PAGE: PTE_U cleared]</text>
+    <text x="25" y="305" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [3]: va=0x3000 -&gt; pa=0xdfde000, flags=[P,W,U]</text>
+    <text x="25" y="325" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)</text>
+    <text x="25" y="345" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="365" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Stack Guard Page Analysis:</text>
+    <text x="25" y="385" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - Notice PTE at index 2 (va = 0x2000): flags = [P, W, -]</text>
+    <text x="25" y="405" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - User bit (PTE_U) is CLEARED by exec() via clearpteu()!</text>
+    <text x="25" y="425" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - This prevents stack overflow from corrupting text/data segments.</text>
+    <text x="25" y="445" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - User-accessible pages = (sz / PGSIZE) - 1 guard page.</text>
+    <text x="25" y="465" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Phase 2] Growing heap by 8 pages via sbrk(8 * 4096):</text>
+    <text x="25" y="485" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="505" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">page table 0x8dfda000 (pid 4: vmprinttest)</text>
+    <text x="25" y="525" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]</text>
+    <text x="25" y="545" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [0]: va=0x0 -&gt; pa=0xdfdb000, flags=[P,W,U]</text>
+    <text x="25" y="565" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [1]: va=0x1000 -&gt; pa=0xdfdc000, flags=[P,W,U]</text>
+    <text x="25" y="585" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [2]: va=0x2000 -&gt; pa=0xdfdd000, flags=[P,W,-] &lt;-- [GUARD PAGE: PTE_U cleared]</text>
+    <text x="25" y="605" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [3]: va=0x3000 -&gt; pa=0xdfde000, flags=[P,W,U]</text>
+    <text x="25" y="625" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [4]: va=0x4000 -&gt; pa=0xdfd7000, flags=[P,W,U]</text>
+    <text x="25" y="645" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [5]: va=0x5000 -&gt; pa=0xdfd6000, flags=[P,W,U]</text>
+    <text x="25" y="665" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [6]: va=0x6000 -&gt; pa=0xdfd5000, flags=[P,W,U]</text>
+    <text x="25" y="685" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [7]: va=0x7000 -&gt; pa=0xdfd4000, flags=[P,W,U]</text>
+    <text x="25" y="705" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [8]: va=0x8000 -&gt; pa=0xdfd3000, flags=[P,W,U]</text>
+    <text x="25" y="725" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [9]: va=0x9000 -&gt; pa=0xdfd2000, flags=[P,W,U]</text>
+    <text x="25" y="745" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [10]: va=0xa000 -&gt; pa=0xdfd1000, flags=[P,W,U]</text>
+    <text x="25" y="765" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [11]: va=0xb000 -&gt; pa=0xdfd0000, flags=[P,W,U]</text>
+    <text x="25" y="785" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)</text>
+    <text x="25" y="805" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="825" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Observation: 8 new consecutive PTEs (index 4 to 11) appeared!</text>
+    <text x="25" y="845" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Phase 3] Shrinking heap by 1 page via sbrk(-4096):</text>
+    <text x="25" y="865" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="885" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">page table 0x8dfda000 (pid 4: vmprinttest)</text>
+    <text x="25" y="905" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]</text>
+    <text x="25" y="925" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [0]: va=0x0 -&gt; pa=0xdfdb000, flags=[P,W,U]</text>
+    <text x="25" y="945" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [1]: va=0x1000 -&gt; pa=0xdfdc000, flags=[P,W,U]</text>
+    <text x="25" y="965" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [2]: va=0x2000 -&gt; pa=0xdfdd000, flags=[P,W,-] &lt;-- [GUARD PAGE: PTE_U cleared]</text>
+    <text x="25" y="985" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [3]: va=0x3000 -&gt; pa=0xdfde000, flags=[P,W,U]</text>
+    <text x="25" y="1005" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [4]: va=0x4000 -&gt; pa=0xdfd7000, flags=[P,W,U]</text>
+    <text x="25" y="1025" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [5]: va=0x5000 -&gt; pa=0xdfd6000, flags=[P,W,U]</text>
+    <text x="25" y="1045" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [6]: va=0x6000 -&gt; pa=0xdfd5000, flags=[P,W,U]</text>
+    <text x="25" y="1065" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [7]: va=0x7000 -&gt; pa=0xdfd4000, flags=[P,W,U]</text>
+    <text x="25" y="1085" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [8]: va=0x8000 -&gt; pa=0xdfd3000, flags=[P,W,U]</text>
+    <text x="25" y="1105" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [9]: va=0x9000 -&gt; pa=0xdfd2000, flags=[P,W,U]</text>
+    <text x="25" y="1125" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">.... pte [10]: va=0xa000 -&gt; pa=0xdfd1000, flags=[P,W,U]</text>
+    <text x="25" y="1145" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)</text>
+    <text x="25" y="1165" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="1185" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Observation: Top PTE (index 11) successfully disappeared!</text>
+    <text x="25" y="1205" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Hierarchical dump accurately tracks dynamic heap life cycle.</text>
+    <text x="25" y="1225" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="1245" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">$ </text>
+  </g>
+</svg>

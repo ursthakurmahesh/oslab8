@@ -1,0 +1,70 @@
+xv6 release 2
+booting...
+cpu0: starting 1
+cpu0: starting 2
+cpu0: starting 3
+sb: size 1000 sectors 10000 log 30 blocks 9639
+init: starting sh
+$ vmprinttest
+
+========================================================
+      xv6 Question 3: Process Page Table Dump Test      
+========================================================
+
+[Phase 1] Process Page Table at Startup:
+--------------------------------------------------------
+page table 0x8dfda000 (pid 4: vmprinttest)
+.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]
+.... pte [0]: va=0x0 -> pa=0xdfdb000, flags=[P,W,U]
+.... pte [1]: va=0x1000 -> pa=0xdfdc000, flags=[P,W,U]
+.... pte [2]: va=0x2000 -> pa=0xdfdd000, flags=[P,W,-] <-- [GUARD PAGE: PTE_U cleared]
+.... pte [3]: va=0x3000 -> pa=0xdfde000, flags=[P,W,U]
+Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)
+--------------------------------------------------------
+Stack Guard Page Analysis:
+  - Notice PTE at index 2 (va = 0x2000): flags = [P, W, -]
+  - User bit (PTE_U) is CLEARED by exec() via clearpteu()!
+  - This prevents stack overflow from corrupting text/data segments.
+  - User-accessible pages = (sz / PGSIZE) - 1 guard page.
+
+[Phase 2] Growing heap by 8 pages via sbrk(8 * 4096):
+--------------------------------------------------------
+page table 0x8dfda000 (pid 4: vmprinttest)
+.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]
+.... pte [0]: va=0x0 -> pa=0xdfdb000, flags=[P,W,U]
+.... pte [1]: va=0x1000 -> pa=0xdfdc000, flags=[P,W,U]
+.... pte [2]: va=0x2000 -> pa=0xdfdd000, flags=[P,W,-] <-- [GUARD PAGE: PTE_U cleared]
+.... pte [3]: va=0x3000 -> pa=0xdfde000, flags=[P,W,U]
+.... pte [4]: va=0x4000 -> pa=0xdfd7000, flags=[P,W,U]
+.... pte [5]: va=0x5000 -> pa=0xdfd6000, flags=[P,W,U]
+.... pte [6]: va=0x6000 -> pa=0xdfd5000, flags=[P,W,U]
+.... pte [7]: va=0x7000 -> pa=0xdfd4000, flags=[P,W,U]
+.... pte [8]: va=0x8000 -> pa=0xdfd3000, flags=[P,W,U]
+.... pte [9]: va=0x9000 -> pa=0xdfd2000, flags=[P,W,U]
+.... pte [10]: va=0xa000 -> pa=0xdfd1000, flags=[P,W,U]
+.... pte [11]: va=0xb000 -> pa=0xdfd0000, flags=[P,W,U]
+Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)
+--------------------------------------------------------
+Observation: 8 new consecutive PTEs (index 4 to 11) appeared!
+
+[Phase 3] Shrinking heap by 1 page via sbrk(-4096):
+--------------------------------------------------------
+page table 0x8dfda000 (pid 4: vmprinttest)
+.. pde [0]: pt_frame=0xdfd9000, flags=[P,W,U]
+.... pte [0]: va=0x0 -> pa=0xdfdb000, flags=[P,W,U]
+.... pte [1]: va=0x1000 -> pa=0xdfdc000, flags=[P,W,U]
+.... pte [2]: va=0x2000 -> pa=0xdfdd000, flags=[P,W,-] <-- [GUARD PAGE: PTE_U cleared]
+.... pte [3]: va=0x3000 -> pa=0xdfde000, flags=[P,W,U]
+.... pte [4]: va=0x4000 -> pa=0xdfd7000, flags=[P,W,U]
+.... pte [5]: va=0x5000 -> pa=0xdfd6000, flags=[P,W,U]
+.... pte [6]: va=0x6000 -> pa=0xdfd5000, flags=[P,W,U]
+.... pte [7]: va=0x7000 -> pa=0xdfd4000, flags=[P,W,U]
+.... pte [8]: va=0x8000 -> pa=0xdfd3000, flags=[P,W,U]
+.... pte [9]: va=0x9000 -> pa=0xdfd2000, flags=[P,W,U]
+.... pte [10]: va=0xa000 -> pa=0xdfd1000, flags=[P,W,U]
+Kernel entries: 512 PDEs mapped (above KERNBASE 0x80000000)
+--------------------------------------------------------
+Observation: Top PTE (index 11) successfully disappeared!
+Hierarchical dump accurately tracks dynamic heap life cycle.
+========================================================
+$ 

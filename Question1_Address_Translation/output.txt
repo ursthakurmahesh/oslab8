@@ -1,0 +1,55 @@
+xv6 release 2
+booting...
+cpu0: starting 1
+cpu0: starting 2
+cpu0: starting 3
+sb: size 1000 sectors 10000 log 30 blocks 9639
+init: starting sh
+$ vatest
+
+========================================================
+  xv6 Question 1: Virtual to Physical Address Translation
+========================================================
+
+[Task 1.c] Translating addresses for process memory regions:
+--------------------------------------------------------
+Translating Global Variable (&global_var):
+va2pa: va=0x2ff8 -> pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -> pa=0xdfdeff8
+  -> VA = 0x2ff8  |  PA = 0xdfdeff8
+
+Translating Local Variable (&local_var):
+va2pa: va=0x3fe8 -> pde_idx=0, pte_idx=3, offset=0xfe8, flags=[P=1, W=1, U=1] -> pa=0xdfdcfe8
+  -> VA = 0x3fe8  |  PA = 0xdfdcfe8
+
+Translating Heap Block (heap_block):
+va2pa: va=0x4010 -> pde_idx=0, pte_idx=4, offset=0x10, flags=[P=1, W=1, U=1] -> pa=0xdfdb010
+  -> VA = 0x4010  |  PA = 0xdfdb010
+
+[Task 1.c] Testing unmapped address (0x7FFFFFFF):
+  -> va2pa(0x7FFFFFFF) = -1 (Expected: -1)
+  -> [PASSED] Correctly returned -1 for unmapped virtual address.
+
+[Task 1.c] Testing kernel address (0x80000000, PTE_U not set):
+  -> va2pa(0x80000000) = -1 (Expected: -1)
+  -> [PASSED] Correctly returned -1 for user-inaccessible kernel page.
+
+[Task 1.d] Testing fork() Address Space Isolation:
+--------------------------------------------------------
+  [CHILD]  Executing in child PID 4
+  [CHILD]  VA of global_var = 0x2ff8
+va2pa: va=0x2ff8 -> pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -> pa=0xdfd8ff8
+  [CHILD]  PA of global_var = 0xdfd8ff8
+  [CHILD]  Modified global_var = 0x9999
+  [PARENT] Child completed. Executing in parent PID 3
+  [PARENT] VA of global_var = 0x2ff8
+va2pa: va=0x2ff8 -> pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -> pa=0xdfdeff8
+  [PARENT] PA of global_var = 0xdfdeff8
+  [PARENT] Value of global_var = 0xabcd (Unchanged!)
+
+--------------------------------------------------------
+  Verification Summary:
+  - Virtual Addresses are IDENTICAL  : 0x2ff8 == 0x2ff8
+  - Physical Addresses are DIFFERENT : Parent PA 0xdfdeff8 != Child PA 0xdfd8ff8
+  - xv6 copyuvm() deep-copy verified: COMPLETE SUCCESS!
+========================================================
+$ 

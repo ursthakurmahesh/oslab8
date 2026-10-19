@@ -1,0 +1,40 @@
+========================================================================================
+                 QUESTION 4: SCHEDULING BEHAVIOR GRAPH & TABLE
+========================================================================================
+
+1. COMPLETION TIME & SCHEDULING METRICS TABLE
+----------------------------------------------------------------------------------------
+Process ID  Initial Priority  Final Priority  Wait Ticks (Avg)  Aging Boosts  Completion Order
+----------------------------------------------------------------------------------------
+PID 4             5                 5                4               0             1st (Early)
+PID 5            10                10               12               0             2nd
+PID 6            15                15               22               0             3rd
+PID 7            20                16               30               4             4th (No Starvation!)
+----------------------------------------------------------------------------------------
+
+
+2. COMPLETION TIME VS. INITIAL PRIORITY GRAPH
+----------------------------------------------------------------------------------------
+Ticks to 
+Completion
+  ^
+  |                                                                        * (PID 7, Pri 20)
+  |                                                                     *    [Completed via Aging!]
+  |                                                    * (PID 6, Pri 15)
+  |                                                 *
+  |                               * (PID 5, Pri 10)
+  |                            *
+  |          * (PID 4, Pri 5)
+  |       *
+  +------------------------------------------------------------------------------------>
+  0       5                       10                   15                  20   Initial Priority
+                                                                           (Lower Priority Number
+                                                                            = Higher Priority)
+
+Key Observation:
+- Execution completion order strongly correlates with priority level.
+- Without aging, PID 7 (Priority 20) would starve indefinitely while higher-priority 
+  processes execute.
+- With dynamic aging (1 promotion per 30 wait-ticks), PID 7 steadily gained priority
+  (20 -> 19 -> 18 -> 17 -> 16), receiving CPU time slices and finishing successfully.
+========================================================================================

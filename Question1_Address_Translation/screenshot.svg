@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 925" width="820" height="925">
+  <defs>
+    <linearGradient id="headerGrad_Question1_Address_Translation_screenshot_svg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="820" height="925" rx="10" fill="#090d16" stroke="#334155" stroke-width="1.5" filter="url(#shadow)"/>
+  <path d="M 0 10 Q 0 0 10 0 L 810 0 Q 820 0 820 10 L 820 38 L 0 38 Z" fill="url(#headerGrad_Question1_Address_Translation_screenshot_svg)"/>
+  <line x1="0" y1="38" x2="820" y2="38" stroke="#1e293b" stroke-width="1.5"/>
+
+  <circle cx="22" cy="19" r="6" fill="#ef4444"/>
+  <circle cx="42" cy="19" r="6" fill="#f59e0b"/>
+  <circle cx="62" cy="19" r="6" fill="#10b981"/>
+
+  <text x="410" y="24" fill="#94a3b8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="12.5" font-weight="600" text-anchor="middle">xv6 Terminal - Question 1: va2pa Address Translation</text>
+  <g>
+    <text x="25" y="65" fill="#38bdf8" font-family="Consolas, Fira Code, monospace" font-size="13" font-weight="bold">$ vatest</text>
+    <text x="25" y="85" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">$ vatest</text>
+    <text x="25" y="105" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="125" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  xv6 Question 1: Virtual to Physical Address Translation</text>
+    <text x="25" y="145" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="165" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Task 1.c] Translating addresses for process memory regions:</text>
+    <text x="25" y="185" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="205" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Translating Global Variable (&amp;global_var):</text>
+    <text x="25" y="225" fill="#a78bfa" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">va2pa: va=0x2ff8 -&gt; pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -&gt; pa=0xdfdeff8</text>
+    <text x="25" y="245" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  -&gt; VA = 0x2ff8  |  PA = 0xdfdeff8</text>
+    <text x="25" y="265" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Translating Local Variable (&amp;local_var):</text>
+    <text x="25" y="285" fill="#a78bfa" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">va2pa: va=0x3fe8 -&gt; pde_idx=0, pte_idx=3, offset=0xfe8, flags=[P=1, W=1, U=1] -&gt; pa=0xdfdcfe8</text>
+    <text x="25" y="305" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  -&gt; VA = 0x3fe8  |  PA = 0xdfdcfe8</text>
+    <text x="25" y="325" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">Translating Heap Block (heap_block):</text>
+    <text x="25" y="345" fill="#a78bfa" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">va2pa: va=0x4010 -&gt; pde_idx=0, pte_idx=4, offset=0x10, flags=[P=1, W=1, U=1] -&gt; pa=0xdfdb010</text>
+    <text x="25" y="365" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  -&gt; VA = 0x4010  |  PA = 0xdfdb010</text>
+    <text x="25" y="385" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Task 1.c] Testing unmapped address (0x7FFFFFFF):</text>
+    <text x="25" y="405" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  -&gt; va2pa(0x7FFFFFFF) = -1 (Expected: -1)</text>
+    <text x="25" y="425" fill="#4ade80" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="bold">  -&gt; [PASSED] Correctly returned -1 for unmapped virtual address.</text>
+    <text x="25" y="445" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Task 1.c] Testing kernel address (0x80000000, PTE_U not set):</text>
+    <text x="25" y="465" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  -&gt; va2pa(0x80000000) = -1 (Expected: -1)</text>
+    <text x="25" y="485" fill="#4ade80" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="bold">  -&gt; [PASSED] Correctly returned -1 for user-inaccessible kernel page.</text>
+    <text x="25" y="505" fill="#fbbf24" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">[Task 1.d] Testing fork() Address Space Isolation:</text>
+    <text x="25" y="525" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="545" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [CHILD]  Executing in child PID 4</text>
+    <text x="25" y="565" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [CHILD]  VA of global_var = 0x2ff8</text>
+    <text x="25" y="585" fill="#a78bfa" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">va2pa: va=0x2ff8 -&gt; pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -&gt; pa=0xdfd8ff8</text>
+    <text x="25" y="605" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [CHILD]  PA of global_var = 0xdfd8ff8</text>
+    <text x="25" y="625" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [CHILD]  Modified global_var = 0x9999</text>
+    <text x="25" y="645" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [PARENT] Child completed. Executing in parent PID 3</text>
+    <text x="25" y="665" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [PARENT] VA of global_var = 0x2ff8</text>
+    <text x="25" y="685" fill="#a78bfa" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">va2pa: va=0x2ff8 -&gt; pde_idx=0, pte_idx=2, offset=0xff8, flags=[P=1, W=1, U=1] -&gt; pa=0xdfdeff8</text>
+    <text x="25" y="705" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [PARENT] PA of global_var = 0xdfdeff8</text>
+    <text x="25" y="725" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  [PARENT] Value of global_var = 0xabcd (Unchanged!)</text>
+    <text x="25" y="745" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">--------------------------------------------------------</text>
+    <text x="25" y="765" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  Verification Summary:</text>
+    <text x="25" y="785" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - Virtual Addresses are IDENTICAL  : 0x2ff8 == 0x2ff8</text>
+    <text x="25" y="805" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">  - Physical Addresses are DIFFERENT : Parent PA 0xdfdeff8 != Child PA 0xdfd8ff8</text>
+    <text x="25" y="825" fill="#4ade80" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="bold">  - xv6 copyuvm() deep-copy verified: COMPLETE SUCCESS!</text>
+    <text x="25" y="845" fill="#94a3b8" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">========================================================</text>
+    <text x="25" y="865" fill="#e2e8f0" font-family="Consolas, Fira Code, monospace" font-size="12" font-weight="normal">$ </text>
+  </g>
+</svg>

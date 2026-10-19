@@ -1,0 +1,49 @@
+xv6 release 2
+booting...
+cpu0: starting 1
+cpu0: starting 2
+cpu0: starting 3
+sb: size 1000 sectors 10000 log 30 blocks 9639
+init: starting sh
+$ memtest
+
+========================================================
+    xv6 Question 2: Physical Memory Statistics Test     
+========================================================
+
+[Phase 1: Initial Baseline]
+  Total System Pages : 56320 (220 MB)
+  Free Physical Pages: 56302 (225208 KB)
+  Process User Pages : 4 (16 KB)
+  Page Table Pages   : 2 (8 KB)
+
+--- Growing heap by 4 pages (16384 bytes) via sbrk() ---
+[Phase 2: After sbrk(4 * 4096)]
+  Total System Pages : 56320 (220 MB)
+  Free Physical Pages: 56298 (225192 KB)
+  Process User Pages : 8 (32 KB)
+  Page Table Pages   : 2 (8 KB)
+
+Allocation Verification:
+  User pages delta : +4 pages (Expected: +4)
+  Free pages delta : -4 pages (Expected: -4)
+
+--- Forking child process to observe free_pages change ---
+  [CHILD PID 4] Running:
+    Free Physical Pages : 56288
+    Process User Pages  : 8
+    Page Table Pages    : 2
+[Phase 3: After Child Exits and is Reaped]
+  Total System Pages : 56320 (220 MB)
+  Free Physical Pages: 56298 (225192 KB)
+  Process User Pages : 8 (32 KB)
+  Page Table Pages   : 2 (8 KB)
+
+--------------------------------------------------------
+Memory Leak Verification:
+  Pre-fork free pages : 56298
+  Post-reap free pages: 56298
+  Delta               : 0 (Exact match!)
+  Status              : [PASSED] ZERO MEMORY LEAK DETECTED!
+========================================================
+$ 
